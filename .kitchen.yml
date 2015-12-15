@@ -1,0 +1,19 @@
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: centos-6.7
+
+suites:
+  - name: nfs4_setfacl_test
+    run_list:
+      - recipe[nfs4_setfacl_test]
+    attributes:
+      nfs4_acl:
+        nfs_export: <%= ENV['NFS4ACL_NFS_EXPORT'] %>
