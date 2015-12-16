@@ -35,6 +35,7 @@ load_current_value do
   end
 end
 
+# Default action :create sets the specified NFS4 ACL using the -s switch.
 action :create do
   # Install nfs4-acl-tools package
   package 'nfs4-acl-tools'
