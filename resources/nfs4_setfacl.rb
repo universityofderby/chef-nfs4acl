@@ -2,7 +2,7 @@
 # Cookbook Name:: nfs4acl
 # Resource:: nfs4_setfacl
 #
-# Copyright 2015 University of Derby
+# Copyright 2016 University of Derby
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 #
 
 resource_name :nfs4_setfacl
-default_action :create
+default_action :set
 property :acl, [String, Array], required: true
 property :file_path, String, required: true, name_property: true
 current_acl = nil
@@ -35,8 +35,8 @@ load_current_value do
   end
 end
 
-# Default action :create sets the specified NFS4 ACL using the -s switch.
-action :create do
+# Default action :set sets the specified NFS4 ACL using the -s switch.
+action :set do
   # Install nfs4-acl-tools package
   package 'nfs4-acl-tools'
 
@@ -44,5 +44,19 @@ action :create do
   execute 'nfs4_setfacl' do
     command "nfs4_setfacl -s '#{acl.to_a.join(',')}' #{file_path}"
     only_if { acl != current_acl && "nfs4_setfacl --test -s '#{acl.to_a.join(',')}' #{file_path}" }
+  end
+end
+
+# Action :add adds the specified NFS4 ACL using the -a switch.
+action :add do
+  # Install nfs4-acl-tools package
+  package 'nfs4-acl-tools'
+
+  # Execute nfs_setfacl command if the current NFS4 ACL does not contain the new ACL and the test command is successful
+  acl.to_a.each do |a|
+    execute "nfs4_setfacl_#{acl.index(a)}" do
+      command "nfs4_setfacl -a '#{a}' #{file_path}"
+      only_if { !current_acl.include?(a) && "nfs4_setfacl --test -a '#{a}' #{file_path}" }
+    end
   end
 end

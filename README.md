@@ -23,7 +23,7 @@ Usage
 Include `nfs4acl` as a dependency in your cookbook's `metadata.rb`.
 
 ```
-depends 'nfs4acl', '= 0.1.0'
+depends 'nfs4acl', '= 1.0.0'
 ```
 
 #### nfs4acl::default
@@ -37,7 +37,7 @@ Specify the file/directory path as the resource name and the ACL as an array of 
 Details on the ACL format can be found in the `nfs4_acl` man page (<http://linux.die.net/man/5/nfs4_acl>).
 NFS4 ACLs are different from standard POSIX permissions.
 
-The default action `:create` uses `nfs_setfacl -s ...` to set the specified NFS4 ACL.
+The default action `:set` uses `nfs_setfacl -s ...` to set the specified NFS4 ACL.
 
     nfs4_setfacl '/tmp/test_file_or_dir' do
       acl [
@@ -48,6 +48,17 @@ The default action `:create` uses `nfs_setfacl -s ...` to set the specified NFS4
         'A::EVERYONE@:rxtncy',
         'D::EVERYONE@:waDTNCo'
       ]
+    end
+
+The action `:add` uses `nfs_setfacl -a ...` to add the specified NFS4 ACL.
+
+    nfs4_setfacl '/tmp/test_file_or_dir' do
+      acl [
+        'A:fdi:OWNER@:rwaDxtTnNcCy',
+        'A:fdig:GROUP@:rwaDxtTnNcy',
+        'A:fdi:EVERYONE@:rxtncy'
+      ]
+      action :add
     end
 
 Contributing
@@ -63,7 +74,7 @@ License and Authors
 -------------------
 Author: Richard Lock
 
-Copyright 2015 University of Derby
+Copyright 2016 University of Derby
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

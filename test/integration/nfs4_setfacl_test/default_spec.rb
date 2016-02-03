@@ -28,6 +28,12 @@ test3_acl = [
   'D::EVERYONE@:waDTNCo'
 ].join('\n')
 
+test4_acl = [
+  'A:fdi:OWNER@:rwaDxtTnNcCy',
+  'A:fdig:GROUP@:rwaDxtTnNcy',
+  'A:fdi:EVERYONE@:rxtncy'
+]
+
 describe package('nfs4-acl-tools') do
   it { should be_installed }
 end
@@ -42,4 +48,14 @@ end
 
 describe command('nfs4_getfacl /mnt/nfs4_acl/test3') do
   its(:stdout) { should match(/#{test3_acl}/) }
+end
+
+describe command('nfs4_getfacl /mnt/nfs4_acl/test4') do
+  test4_acl.each do |a|
+    its(:stdout) { should match(/#{a}/) }
+  end
+end
+
+describe file('/mnt/nfs4_acl/test4/test4_file') do
+  it { should be_mode 0775 }
 end
