@@ -2,7 +2,7 @@
 # Cookbook Name:: nfs4_setfacl_test
 # Recipe:: default
 #
-# Copyright 2015 University of Derby
+# Copyright 2016 University of Derby
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,9 +27,13 @@ test2_export_dir = File.join(test1_dir, test2_dir)
 test3_dir = 'test3'
 test3_mount_dir = File.join(base_dir, test3_dir)
 test3_export_dir = File.join(test1_dir, test3_dir)
+test4_dir = 'test4'
+test4_mount_dir = File.join(base_dir, test4_dir)
+test4_export_dir = File.join(test1_dir, test4_dir)
+test4_file = File.join(test4_mount_dir, 'test4_file')
 
 # Create directories
-[test1_dir, test2_mount_dir, test3_mount_dir].each do |d|
+[test1_dir, test2_mount_dir, test3_mount_dir, test4_mount_dir].each do |d|
   directory d do
     owner 'root'
     group 'root'
@@ -46,7 +50,7 @@ mount test1_dir do
   fstype 'nfs4'
 end
 
-# Create test file
+# Create test1 file
 file test1_file do
   owner 'root'
   group 'root'
@@ -55,7 +59,7 @@ file test1_file do
 end
 
 # Create directories under mounted test directory
-[test2_export_dir, test3_export_dir].each do |d|
+[test2_export_dir, test3_export_dir, test4_export_dir].each do |d|
   directory d do
     owner 'root'
     group 'root'
@@ -67,7 +71,7 @@ end
 end
 
 # Mount test subdirectories
-[test2_dir, test3_dir].each do |d|
+[test2_dir, test3_dir, test4_dir].each do |d|
   mount File.join(base_dir, d) do
     device File.join(node['nfs4_acl']['nfs_export'], d)
     fstype 'nfs4'
@@ -111,4 +115,21 @@ nfs4_setfacl test3_mount_dir do
     'A:fdi:EVERYONE@:rwaDxtTnNcy',
     'D::EVERYONE@:waDTNCo'
   ]
+end
+
+# Add nfs4_acl file inheritance on test4 directory
+nfs4_setfacl test4_mount_dir do
+  acl [
+    'A:fdi:OWNER@:rwaDxtTnNcCy',
+    'A:fdig:GROUP@:rwaDxtTnNcy',
+    'A:fdi:EVERYONE@:rxtncy'
+  ]
+  action :add
+end
+
+# Create test4 file
+file test4_file do
+  owner 'root'
+  group 'root'
+  not_if { ::File.exist?(test4_file) }
 end
