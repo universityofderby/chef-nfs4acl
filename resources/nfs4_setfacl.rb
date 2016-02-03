@@ -56,7 +56,7 @@ action :add do
   acl.to_a.each do |a|
     execute "nfs4_setfacl_#{acl.index(a)}" do
       command "nfs4_setfacl -a '#{a}' #{file_path}"
-      only_if { !current_acl.include?(a) && "nfs4_setfacl --test -a '#{a}' #{file_path}" }
+      only_if { !current_acl.to_a.include?(a) && "nfs4_setfacl --test -a '#{a}' #{file_path}" }
     end
   end
 end
