@@ -1,6 +1,11 @@
 nfs4acl Cookbook CHANGELOG
 ==========================
 
+1.0.1 (2016-02-03)
+------------------
+- Richard Lock
+- Fixed issue #2: ensures current_acl is array
+
 1.0.0 (2016-02-03)
 ------------------
 - Richard Lock
