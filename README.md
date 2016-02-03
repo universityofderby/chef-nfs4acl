@@ -23,7 +23,7 @@ Usage
 Include `nfs4acl` as a dependency in your cookbook's `metadata.rb`.
 
 ```
-depends 'nfs4acl', '= 1.0.0'
+depends 'nfs4acl', '= 1.0.1'
 ```
 
 #### nfs4acl::default
